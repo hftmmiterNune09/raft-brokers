@@ -2,9 +2,10 @@
 Note that no user is present in the begining. We have to add users from the admin acount
 
 # RUN 3 ATM TERMINALS
-    └──bash atm1.sh
-    └──bash atm2.sh
-    └──bash atm3.sh
+    command
+        └──bash atm1.sh
+        └──bash atm2.sh
+        └──bash atm3.sh
 
 # ALLOWED OPERATIONS
     admin:
