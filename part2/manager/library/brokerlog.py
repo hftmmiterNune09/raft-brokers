@@ -29,7 +29,7 @@ class Brokers:
 
     def choose(self,replica=3):
         self.refresh()
-        return np.random.choice(self.brokers,size=replica,replace=True)
+        return np.random.choice(self.brokers,size=min(len(self.brokers),replica))
 
     def lisTopics(self):
         self.refresh()

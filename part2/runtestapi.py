@@ -88,6 +88,10 @@ def test_brokers(bkr):
     assert "All test cases are passed" in res, f'{bkr}  test not passed'
     print("Pass: test brokers")
 
+run_test(add_brokers,('broker2',))
+run_test(add_brokers,('broker3',))
+run_test(add_brokers,('broker4',))
+sleep(20)
 
 if run_test(can_send):
     run_test(get_topics)
