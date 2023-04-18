@@ -1,4 +1,5 @@
 import requests
+import numpy as np
 from .api import ApiHandler
 
 class Brokers:
@@ -34,7 +35,8 @@ class Brokers:
             if T not in self.topics:
                 return f"{T} does not exist, thus can not register as consumer", 400
             all_ids=[]
-            for part,bkr in self.topics[T].items():
+            for part,bkrs in self.topics[T].items():
+                bkr=np.random.choice(bkrs)
                 self.api.setbroker(bkr)
                 sob_id=self.api.reg_consumer(f"{T}x{part}")
                 all_ids.append(f"{T}x{part}@"+sob_id)
@@ -44,8 +46,9 @@ class Brokers:
         else:
             if not self.checkifTopicPartExist(T,P):
                 return f"{T}:{P} does not exist, thus can not register as consumer",400
-            bkr=self.topics[T][P]
+            bkrs=self.topics[T][P]
             try:
+                bkr=np.random.choice(bkrs)
                 self.api.setbroker(bkr)
                 sob_id=self.api.reg_consumer(f"{T}x{P}")
                 sub_id=subl.add_subscriber(f"{T}x{P}@"+sob_id)

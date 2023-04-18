@@ -1,14 +1,14 @@
 import os
-import json
-import random
+import numpy as np
 from .api import ApiHandler
 from collections import defaultdict
 
 class Brokers:
-    def __init__(self):
+    def __init__(self,replicas=3):
         self.api=ApiHandler()
         self.topics={}
         self.refresh()
+        self.replicas=replicas
 
     @property
     def curr_topics(self):
@@ -27,9 +27,9 @@ class Brokers:
         self.refresh()
         return self.brokers
 
-    def choose(self):
+    def choose(self,replica=3):
         self.refresh()
-        return random.choice(self.brokers)
+        return np.random.choice(self.brokers,size=replica,replace=True)
 
     def lisTopics(self):
         self.refresh()
@@ -40,7 +40,9 @@ class Brokers:
                 msg=self.api.get_topics()
                 for TxP in msg:
                     T,P=TxP.split("x")
-                    topics[T][P]=bkr
+                    if P not in topics[T]:
+                        topics[T][P]=[]
+                    topics[T][P].append(bkr)
             except:pass
         return dict(topics)
     
@@ -55,12 +57,15 @@ class Brokers:
     def add_topic(self,T,P):
         if self.checkifTopicPartExist(T,P):
             return f"{T}:{P} already exist",400
-        bkr=self.choose()
+        bkrs=self.choose(replica=self.replicas)
         try:
-            self.api.setbroker(bkr)
-            res=self.api.add_topics(f"{T}x{P}")
-            self.refreshTopics()
-            return res, 200
+            result=''
+            for bkr in bkrs:
+                self.api.setbroker(bkr)
+                res=self.api.add_topics(f"{T}x{P}")
+                result+=res+','
+                self.refreshTopics()
+            return result[:-1], 200
         except Exception as e:
             return str(e),400
 
@@ -69,20 +74,28 @@ class Brokers:
             if T not in self.topics:
                 return f"{T} does not exist thus no partitions are available", 400
             all_ids=[]
-            for part,bkr in self.topics[T].items():
-                self.api.setbroker(bkr)
-                prod_id=self.api.reg_producer(f"{T}x{part}")
-                all_ids.append(f"{T}x{part}@"+prod_id)
+            for part,bkrs in self.topics[T].items():
+                part_ids=[]
+                for bkr in bkrs:
+                    self.api.setbroker(bkr)
+                    prod_id=self.api.reg_producer(f"{T}x{part}")
+                    part_ids.append(prod_id)
+                com_pt_id='!'.join(part_ids)
+                all_ids.append(f"{T}x{part}@"+com_pt_id)
             combined_id='|'.join(all_ids)
             pub_id=publ.add_publisher(combined_id)
             return pub_id, 200
         else:
             self.add_topic(T,P)
-            bkr=self.topics[T][P]
+            bkrs=self.topics[T][P]
             try:
-                self.api.setbroker(bkr)
-                prod_id=self.api.reg_producer(f"{T}x{P}")
-                pub_id=publ.add_publisher(f"{T}x{P}@"+prod_id)
+                part_ids=[]
+                for bkr in bkrs:
+                    self.api.setbroker(bkr)
+                    prod_id=self.api.reg_producer(f"{T}x{P}")
+                    part_ids.append(prod_id)
+                com_pt_id='!'.join(part_ids)
+                pub_id=publ.add_publisher(f"{T}x{P}@"+com_pt_id)
                 return pub_id, 200
             except Exception as e:
                 return str(e),400
@@ -104,7 +117,8 @@ class Brokers:
             if T not in self.topics:
                 return f"{T} does not exist, thus can not register as consumer", 400
             all_ids=[]
-            for part,bkr in self.topics[T].items():
+            for part,bkrs in self.topics[T].items():
+                bkr=np.random.choice(bkrs)
                 self.api.setbroker(bkr)
                 sob_id=self.api.reg_consumer(f"{T}x{part}")
                 all_ids.append(f"{T}x{part}@"+sob_id)
@@ -114,8 +128,9 @@ class Brokers:
         else:
             if not self.checkifTopicPartExist(T,P):
                 return f"{T}:{P} does not exist, thus can not register as consumer",400
-            bkr=self.topics[T][P]
+            bkrs=self.topics[T][P]
             try:
+                bkr=np.random.choice(bkrs)
                 self.api.setbroker(bkr)
                 sob_id=self.api.reg_consumer(f"{T}x{P}")
                 sub_id=subl.add_subscriber(f"{T}x{P}@"+sob_id)

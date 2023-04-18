@@ -67,11 +67,14 @@ def handle_produce():
     data=request.get_json()
     pub_id=int(data["producer_id"])
     msg=data["message"]
-    TxP,nhop_pub_id=publ.translate(pub_id)
-    bkr=nhop_pub_id.split('@')[0]
-    msg,status_code=brokers.produce(bkr,TxP,nhop_pub_id,msg)
+    TxP,nhop_pub_ids=publ.translate(pub_id)
+    message=""
+    for nhop_pub_id in nhop_pub_ids.split("!"):
+        bkr=nhop_pub_id.split('@')[0]
+        msg,status_code=brokers.produce(bkr,TxP,nhop_pub_id,msg)
+        message+=msg+","
     mode='success' if status_code==200 else 'failure'
-    return Response(status_code, message=msg, status=mode)
+    return Response(status_code, message=message[:-1], status=mode)
 
 #---------------------------------- Handling Subscribers ----------------------------#
 @app.route("/consumer/register",methods=["POST"])
