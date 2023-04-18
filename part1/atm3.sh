@@ -1,0 +1,1 @@
+python atm.py localhost:1002 localhost:1001 localhost:1000
