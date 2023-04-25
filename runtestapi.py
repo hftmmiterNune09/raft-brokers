@@ -101,44 +101,44 @@ else:
 t1=f"T{random.randint(0,1000)}"
 p1=f"P{random.randint(0,1000)}"
 
-run_test(create_topic,(t1,p1))
-run_test(create_topic,(t1,"P1"))
+run_test(create_topic,(t1,p1),shoulderr=True)
+run_test(create_topic,(t1,"P1"),shoulderr=True)
 if 'secondtopic' not in myapi.get_topics():
-    run_test(create_topic,("secondtopic","P1"))
+    run_test(create_topic,("secondtopic","P1"),shoulderr=True)
 
-run_test(get_topics,(t1,))
+run_test(get_topics,(t1,),shoulderr=True)
 run_test(reg_consumer,("T3", "P1"),shoulderr=True)             #AsExpected: Topic:T3:P1 does not exist
-cid=run_test(reg_consumer,(t1,p1))
-run_test(get_size,(cid,0))
+cid=run_test(reg_consumer,(t1,p1),shoulderr=True)
+run_test(get_size,(cid,0),shoulderr=True)
 run_test(consume,(cid,),shoulderr=True)                        #AsExpected: Empty logs for Comsumer:{} for {cid} thus empty response
 
 
-pid=run_test(reg_producer,(t1,None))
-run_test(produce,(pid,)) 
-run_test(produce,(pid,))
-run_test(produce,(pid,))
+pid=run_test(reg_producer,(t1,None),shoulderr=True)
+run_test(produce,(pid,),shoulderr=True) 
+run_test(produce,(pid,),shoulderr=True)
+run_test(produce,(pid,),shoulderr=True)
 
 
 
-run_test(get_size,(cid,2))
-run_test(consume,(cid,))
-run_test(get_size,(cid,1))
+run_test(get_size,(cid,2),shoulderr=True)
+run_test(consume,(cid,),shoulderr=True)
+run_test(get_size,(cid,1),shoulderr=True)
 
-cid2=run_test(reg_consumer,(t1,None))
-run_test(get_size,(cid2,0))
-run_test(produce,(pid,))
-run_test(produce,(pid,))
-run_test(produce,(pid,))
-run_test(get_size,(cid,2))
-run_test(get_size,(cid2,3))
+cid2=run_test(reg_consumer,(t1,None),shoulderr=True)
+run_test(get_size,(cid2,0),shoulderr=True)
+run_test(produce,(pid,),shoulderr=True)
+run_test(produce,(pid,),shoulderr=True)
+run_test(produce,(pid,),shoulderr=True)
+run_test(get_size,(cid,2),shoulderr=True)
+run_test(get_size,(cid2,3),shoulderr=True)
 
 
-bkrs=run_test(get_brokers,('broker0',))
+bkrs=run_test(get_brokers,('broker0',),shoulderr=True)
 if 'broker1' not in bkrs:
-    run_test(add_brokers,('broker1',))
+    run_test(add_brokers,('broker1',),shoulderr=True)
     sleep(20)
-run_test(test_brokers,('broker0',))
-run_test(rm_brokers,('broker1',))
+run_test(test_brokers,('broker0',),shoulderr=True)
+run_test(rm_brokers,('broker1',),shoulderr=True)
 run_test(rm_brokers,('broker1',),shoulderr=True)                #AsExpected: broker1 does not exist
 run_test(test_brokers,('broker1',),shoulderr=True)              #AsExpected: broker1 does not exist
 
