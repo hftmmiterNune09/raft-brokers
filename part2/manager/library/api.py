@@ -36,10 +36,10 @@ class ApiHandler:
         while True:
             try:
                 res=requests.post(self.url+'/topics',json={'topic_name':topic})
-                break
-            except:time.sleep(2)
-        self.raiseExceptionOnFailure(res)
-        return self.decodeResponse(res,'message')
+                self.raiseExceptionOnFailure(res)
+                return self.decodeResponse(res,'message')
+            except requests.exceptions.ConnectionError:
+                time.sleep(2)
             
     def reg_consumer(self,topic):
         res=requests.post(self.url+'/consumer/register',json={'topic':topic})

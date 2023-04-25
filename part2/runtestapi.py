@@ -88,9 +88,9 @@ def test_brokers(bkr):
     assert "All test cases are passed" in res, f'{bkr}  test not passed'
     print("Pass: test brokers")
 
-run_test(add_brokers,('broker2',))
-run_test(add_brokers,('broker3',))
-run_test(add_brokers,('broker4',))
+run_test(add_brokers,('broker2',),shoulderr=True)
+run_test(add_brokers,('broker3',),shoulderr=True)
+run_test(add_brokers,('broker4',),shoulderr=True)
 sleep(20)
 
 if run_test(can_send):
@@ -137,7 +137,7 @@ bkrs=run_test(get_brokers,('broker0',))
 if 'broker1' not in bkrs:
     run_test(add_brokers,('broker1',))
     sleep(20)
-run_test(test_brokers,('broker1',))
+run_test(test_brokers,('broker0',))
 run_test(rm_brokers,('broker1',))
 run_test(rm_brokers,('broker1',),shoulderr=True)                #AsExpected: broker1 does not exist
 run_test(test_brokers,('broker1',),shoulderr=True)              #AsExpected: broker1 does not exist

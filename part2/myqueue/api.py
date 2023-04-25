@@ -61,7 +61,7 @@ class ApiHandler:
                 res=requests.post(self.manager+'/producer/register',json=data)
                 self.raiseExceptionOnFailure(res)
                 break
-            except:
+            except requests.exceptions.ConnectionError:
                 time.sleep(1)
             if not retry: break
         return self.decodeResponse(res,'message')
@@ -84,7 +84,7 @@ class ApiHandler:
                 res=requests.post(self.manager2+'/consumer/register',json=data)
                 self.raiseExceptionOnFailure(res)
                 break
-            except:
+            except requests.exceptions.ConnectionError:
                 time.sleep(1)
             if not retry: break
         return self.decodeResponse(res,'message')
@@ -116,7 +116,7 @@ class ApiHandler:
                 res=requests.get(self.manager+'/brokers/add', params={'broker_name':broker_name})
                 self.raiseExceptionOnFailure(res)
                 return self.decodeResponse(res,'message')
-            except:
+            except requests.exceptions.ConnectionError:
                 print(f"retying to add broker {broker_name}")
                 time.sleep(5)
                 continue
