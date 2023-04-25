@@ -2,7 +2,7 @@ import time
 import requests
 
 class ApiHandler:
-    def __init__(self,host='localhost',primary='5000',readonly='5001'):
+    def __init__(self,host='localhost',primary='5000',readonly='5003'):
         self.manager='http://'+host+':'+primary
         self.manager2='http://'+host+':'+readonly
         

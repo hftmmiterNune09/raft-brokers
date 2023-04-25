@@ -3,12 +3,14 @@ services:
   manager:
     build: ./manager
     image: manager
-    container_name: manager
     ports:
-      - "5000:5000"
+      - "5000-5002:5000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     privileged: true
+    deploy:
+      mode: replicated
+      replicas: 3
     networks:
       network1:
         aliases:
@@ -19,11 +21,13 @@ services:
   manager2:
     build: ./manager2
     image: manager2
-    container_name: manager2
     depends_on:
       - manager
     ports:
-      - "5001:5000"
+      - "5003-5005:5000"
+    deploy:
+      mode: replicated
+      replicas: 3
     networks:
       network1:
         aliases:
