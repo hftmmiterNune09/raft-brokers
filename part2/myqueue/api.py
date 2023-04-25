@@ -118,7 +118,7 @@ class ApiHandler:
                 return self.decodeResponse(res,'message')
             except:
                 print(f"retying to add broker {broker_name}")
-                time.sleep(1)
+                time.sleep(5)
                 continue
 
     def rm_broker(self,broker_name):

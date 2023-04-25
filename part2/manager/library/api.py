@@ -1,3 +1,4 @@
+import time
 import requests
 
 class ApiHandler:
@@ -32,7 +33,11 @@ class ApiHandler:
             
     def add_topics(self,topic):
         self.raiseExceptionOnProhabitedTopic(topic)
-        res=requests.post(self.url+'/topics',json={'topic_name':topic})
+        while True:
+            try:
+                res=requests.post(self.url+'/topics',json={'topic_name':topic})
+                break
+            except:time.sleep(2)
         self.raiseExceptionOnFailure(res)
         return self.decodeResponse(res,'message')
             
