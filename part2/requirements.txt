@@ -4,3 +4,4 @@ pandas==1.5.3
 numpy==1.24.1
 mysql-connector-python==8.0.32
 iterators==0.2.0
+pysyncobj==0.3.12
