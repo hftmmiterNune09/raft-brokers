@@ -1,4 +1,25 @@
-# Distributed Queue with sharding
+# RAFT based ATM network (P-I)
+Note that no user is present in the begining. We have to add users from the admin acount
+
+# RUN 3 ATM TERMINALS
+    command (go to part1 folder)
+        └──bash atm1.sh
+        └──bash atm2.sh
+        └──bash atm3.sh
+
+# ALLOWED OPERATIONS
+    admin:
+        └──add usename $money     /* add user in the system with initial money */
+        └──rm username            /* remove user from the system */
+        └──ls                     /* list user in the system */
+    users:
+        └──chuser username        /* change user */
+        └──wd $money              /* withdraw money from current user */
+        └──dp $money              /* deposit money to the current user */
+        └──bal                    /* check balance of the current user */
+        └──trto otheruser $money  /* transfer $money from current user to other user */
+
+# Distributed Queue with sharding & Consensus (P-II & III)
 <p align="center">
       <img src="images/broker.png" width="90%"/><br><strong>Fig.1: Overview</strong>
 </p>
