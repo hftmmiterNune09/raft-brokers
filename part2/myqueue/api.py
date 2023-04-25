@@ -111,9 +111,15 @@ class ApiHandler:
     def add_broker(self,broker_name):
         self.raiseExceptionOnProhabited(broker_name)
         if 'broker' not in broker_name: raise Exception(f"{broker_name} does not contain broker keyword")
-        res=requests.get(self.manager+'/brokers/add', params={'broker_name':broker_name})
-        self.raiseExceptionOnFailure(res)
-        return self.decodeResponse(res,'message')
+        while True:
+            try:
+                res=requests.get(self.manager+'/brokers/add', params={'broker_name':broker_name})
+                self.raiseExceptionOnFailure(res)
+                return self.decodeResponse(res,'message')
+            except:
+                print(f"retying to add broker {broker_name}")
+                time.sleep(1)
+                continue
 
     def rm_broker(self,broker_name):
         self.raiseExceptionOnProhabited(broker_name)

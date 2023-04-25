@@ -102,7 +102,7 @@ class Brokers:
 
     def produce(self,bkr,TxP,nhop_pub_id,msg):
         T,P=TxP.split("x")
-        if (not self.checkifTopicPartExist(T,P)) or bkr in self.topics[T][P]:
+        if (not self.checkifTopicPartExist(T,P)) or bkr not in self.topics[T][P]:
             return f"{T}:{P}@{bkr} does not exist, thus can not produce",400
         try:
             self.api.setbroker(bkr)
@@ -141,7 +141,7 @@ class Brokers:
 
     def consume(self,bkr,TxP,nhop_sub_id):
         T,P=TxP.split("x")
-        if (not self.checkifTopicPartExist(T,P)) or bkr!=self.topics[T][P]:
+        if (not self.checkifTopicPartExist(T,P)) or bkr not in self.topics[T][P]:
             return f"{T}:{P}@{bkr} does not exist, thus can not consume",400
         try:
             self.api.setbroker(bkr)
@@ -152,7 +152,7 @@ class Brokers:
 
     def get_size(self,bkr,TxP,nhop_sub_id):
         T,P=TxP.split("x")
-        if (not self.checkifTopicPartExist(T,P)) or bkr!=self.topics[T][P]:
+        if (not self.checkifTopicPartExist(T,P)) or bkr not in self.topics[T][P]:
             return f"{T}:{P}@{bkr} does not exist, invalid size",400
         try:
             self.api.setbroker(bkr)
